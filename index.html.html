@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="אריאל מתאמן">
+<meta name="theme-color" content="#111">
+<title>אריאל מתאמן ⚔</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g:#2C5F2E;--g2:#1a3d1c;--g3:#4a8f4c;--acc:#7fff7f;--bg:#0d0d0d;--bg2:#141a14;--bg3:#1c241c;--txt:#e8f0e8;--txt2:#8fa88f;--txt3:#4a5e4a;--red:#c0392b;--yel:#d4ac0d;--bdr:#243024}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Noto Sans Hebrew',sans-serif;overflow:hidden}
+#app{height:100dvh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
+.header{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--acc);letter-spacing:1px}
+.gear-btn{background:none;border:none;color:var(--txt2);font-size:22px;cursor:pointer;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.bottom-nav{background:var(--bg2);border-top:1px solid var(--bdr);display:flex;flex-shrink:0}
+.nav-btn{flex:1;border:none;background:none;color:var(--txt3);padding:8px 0 12px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-size:9px;font-family:'Noto Sans Hebrew',sans-serif;transition:color .2s;min-height:58px}
+.nav-btn .icon{font-size:20px}
+.nav-btn.active{color:var(--acc)}
+.tab{display:none;padding:16px;animation:fadeIn .2s ease}
+.tab.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.card-title{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:10px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:1px}
+.badge-a{background:#1a3d6e;color:#7db8ff}
+.badge-b{background:#3d1a6e;color:#c07dff}
+.badge-legs{background:#3d2a1a;color:#ffaa7d}
+.btn{border:none;border-radius:10px;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .15s;min-height:50px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.btn-primary{background:var(--g);color:var(--acc)}
+.btn-primary:active{background:var(--g2);transform:scale(.98)}
+.btn-secondary{background:var(--bg3);color:var(--txt);border:1px solid var(--bdr)}
+.btn-danger{background:#2d1010;color:#ff7d7d;border:1px solid #5a2020}
+.btn-sm{min-height:40px;font-size:13px;padding:0 14px;width:auto}
+/* TODAY */
+.today-hero{text-align:center;padding:24px 0 16px}
+.today-big-letter{font-family:'Oswald',sans-serif;font-size:80px;font-weight:700;color:var(--acc);line-height:1;text-shadow:0 0 40px rgba(127,255,127,.3)}
+.today-sub{font-size:14px;color:var(--txt2);margin-top:4px}
+.stat-row{display:flex;gap:10px;margin-bottom:12px}
+.stat-box{flex:1;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center}
+.stat-num{font-family:'Oswald',sans-serif;font-size:28px;color:var(--acc)}
+.stat-lbl{font-size:10px;color:var(--txt2);margin-top:2px}
+/* CHOOSE WORKOUT */
+.workout-choice{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.workout-choice-card{background:var(--bg2);border:2px solid var(--bdr);border-radius:14px;padding:20px 12px;text-align:center;cursor:pointer;transition:all .15s}
+.workout-choice-card:active{transform:scale(.97)}
+.workout-choice-card.highlighted{border-color:var(--g3)}
+.wc-letter{font-family:'Oswald',sans-serif;font-size:52px;font-weight:700;line-height:1}
+.wc-label{font-size:12px;color:var(--txt2);margin-top:4px}
+.wc-tag{font-size:10px;color:var(--g3);margin-top:4px;font-weight:700}
+/* SESSION */
+#session-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column;max-width:480px;margin:0 auto}
+#session-screen.active{display:flex}
+.sess-hdr{padding:14px 16px;background:var(--bg2);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sess-prog-bar{height:3px;background:var(--bg3);flex-shrink:0}
+.sess-prog-fill{height:100%;background:var(--g3);transition:width .4s ease}
+.sess-body{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px}
+.ex-card{background:var(--bg2);border:2px solid var(--g);border-radius:14px;padding:20px}
+.ex-name{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;margin-bottom:4px}
+.ex-meta{font-size:12px;color:var(--txt2);margin-bottom:16px;line-height:1.6}
+.set-ctr{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;color:var(--g3);text-transform:uppercase;margin-bottom:12px}
+.reps-ctrl{display:flex;align-items:center;justify-content:center;gap:16px;margin:8px 0 18px}
+.rep-btn{width:56px;height:56px;border-radius:50%;border:2px solid var(--g);background:var(--bg3);color:var(--acc);font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s}
+.rep-btn:active{background:var(--g2);transform:scale(.9)}
+.reps-val{font-family:'Oswald',sans-serif;font-size:60px;font-weight:700;color:var(--acc);min-width:72px;text-align:center;line-height:1}
+.reps-hint{font-size:11px;color:var(--txt2);text-align:center;margin-bottom:2px}
+.ss-badge{display:inline-flex;align-items:center;gap:5px;background:#2d1a3d;border:1px solid #6a3d8a;border-radius:20px;padding:3px 10px;font-size:10px;color:#c07dff;font-family:'Oswald',sans-serif;letter-spacing:1px;margin-bottom:10px}
+/* TIMER */
+#timer-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:101;flex-direction:column;align-items:center;justify-content:center;max-width:480px;margin:0 auto;gap:24px}
+#timer-screen.active{display:flex}
+.timer-title{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:3px;color:var(--txt2);text-transform:uppercase}
+.timer-wrap{position:relative;width:190px;height:190px}
+.timer-wrap svg{transform:rotate(-90deg)}
+.t-bg{fill:none;stroke:var(--bg3);stroke-width:7}
+.t-fill{fill:none;stroke:var(--g3);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .95s linear}
+.timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:52px;font-weight:700;color:var(--acc)}
+.timer-btns{display:flex;gap:10px}
+/* COMPLETE */
+#complete-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:102;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:16px;max-width:480px;margin:0 auto;text-align:center}
+#complete-screen.active{display:flex}
+.comp-icon{font-size:68px;animation:pop .5s cubic-bezier(.4,0,.2,1)}
+@keyframes pop{from{transform:scale(0)}60%{transform:scale(1.2)}to{transform:scale(1)}}
+.comp-title{font-family:'Oswald',sans-serif;font-size:34px;font-weight:700;color:var(--acc)}
+.comp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%}
+.comp-stat{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px}
+.comp-num{font-family:'Oswald',sans-serif;font-size:26px;color:var(--acc)}
+.comp-lbl{font-size:10px;color:var(--txt2);margin-top:2px}
+/* WARMUP */
+#warmup-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:20px;max-width:480px;margin:0 auto;text-align:center}
+#warmup-screen.active{display:flex}
+/* PROGRESS */
+.chal-wrap{margin-bottom:16px}
+.chal-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.chal-name{font-size:13px;font-weight:600}
+.chal-num{font-family:'Oswald',sans-serif;font-size:17px;color:var(--acc)}
+.chal-track{height:10px;background:var(--bg3);border-radius:99px;overflow:hidden}
+.chal-fill{height:100%;background:var(--g3);border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.chal-fill.done{background:var(--acc)}
+/* PROGRAM MAP */
+.map-wrap{position:relative;background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;overflow:hidden;padding:20px}
+.map-path{position:relative;display:flex;flex-direction:column;gap:0}
+.map-phase-label{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;text-align:center;padding:10px 0;letter-spacing:2px}
+.map-phase-base{color:#4a8f4c}
+.map-phase-pro{color:#c0392b}
+.map-levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:8px 0}
+.map-level{background:var(--bg3);border:2px solid var(--bdr);border-radius:12px;padding:12px 6px;text-align:center;position:relative}
+.map-level.current{border-color:var(--acc);background:#1a2e1a;box-shadow:0 0 16px rgba(127,255,127,.2)}
+.map-level.done{border-color:var(--g3);opacity:.7}
+.map-level.locked{opacity:.35}
+.map-level-num{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--txt)}
+.map-level.done .map-level-num{color:var(--g3)}
+.map-level.current .map-level-num{color:var(--acc)}
+.map-level-label{font-size:9px;color:var(--txt2);margin-top:2px}
+.map-level-badge{position:absolute;top:-6px;right:-6px;font-size:14px}
+/* HISTORY */
+.sess-row{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px;overflow:hidden;cursor:pointer}
+.sess-row-hdr{display:flex;align-items:center;gap:8px;padding:12px}
+.sess-row-date{flex:1;font-size:13px}
+.sess-row-info{font-size:11px;color:var(--txt2)}
+.sess-detail{display:none;padding:0 12px 12px;border-top:1px solid var(--bdr)}
+.sess-detail.open{display:block}
+.set-log{display:flex;justify-content:space-between;padding:3px 0;font-size:12px;border-bottom:1px solid var(--bg3)}
+.set-log:last-child{border-bottom:none}
+.rep-ok{color:#7fff7f}.rep-close{color:var(--yel)}.rep-low{color:var(--red)}
+.ex-g-name{font-size:11px;color:var(--txt2);margin:7px 0 3px;font-weight:600}
+/* SETTINGS */
+#settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200}
+#settings-overlay.active{display:flex;align-items:flex-end}
+.settings-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:22px 18px 38px;width:100%;max-width:480px;margin:0 auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.s-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--acc);margin-bottom:18px}
+.s-row{margin-bottom:14px}
+.s-lbl{font-size:11px;color:var(--txt2);margin-bottom:5px;letter-spacing:1px}
+.s-input{width:100%;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:16px;padding:10px 12px;font-family:'Noto Sans Hebrew',sans-serif}
+.protein-hint{font-size:11px;color:var(--g3);margin-top:5px}
+.divider{height:1px;background:var(--bdr);margin:14px 0}
+.empty-state{text-align:center;padding:50px 20px;color:var(--txt2)}
+.empty-icon{font-size:44px;margin-bottom:10px}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:99px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <span class="header-title">אריאל מתאמן ⚔</span>
+    <button class="gear-btn" onclick="openSettings()">⚙</button>
+  </div>
+  <div class="content" id="main-content">
+    <div class="tab active" id="tab-today"><div id="today-content"></div></div>
+    <div class="tab" id="tab-workout"><div id="workout-content"></div></div>
+    <div class="tab" id="tab-progress"><div id="progress-content"></div></div>
+    <div class="tab" id="tab-map"><div id="map-content"></div></div>
+    <div class="tab" id="tab-history"><div id="history-content"></div></div>
+  </div>
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('today')" id="nav-today"><span class="icon">🏠</span>היום</button>
+    <button class="nav-btn" onclick="switchTab('workout')" id="nav-workout"><span class="icon">💪</span>אימון</button>
+    <button class="nav-btn" onclick="switchTab('progress')" id="nav-progress"><span class="icon">🎯</span>יעד</button>
+    <button class="nav-btn" onclick="switchTab('map')" id="nav-map"><span class="icon">🗺</span>מפה</button>
+    <button class="nav-btn" onclick="switchTab('history')" id="nav-history"><span class="icon">📋</span>היסטוריה</button>
+  </nav>
+</div>
+
+<!-- WARMUP -->
+<div id="warmup-screen">
+  <div style="font-size:60px">🔥</div>
+  <div style="font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:var(--acc)">חימום חובה!</div>
+  <div id="warmup-type-label" style="font-size:14px;color:var(--txt2);line-height:1.7"></div>
+  <button class="btn btn-primary" style="max-width:260px" onclick="startActualWorkout()">✅ סיימתי – נתחיל!</button>
+  <button class="btn btn-secondary btn-sm" onclick="cancelSession()">ביטול</button>
+</div>
+
+<!-- SESSION -->
+<div id="session-screen">
+  <div class="sess-hdr">
+    <div>
+      <div style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:var(--acc)" id="sess-title"></div>
+      <div style="font-size:11px;color:var(--txt2)" id="sess-sub"></div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="confirmCancelSession()">✕ יציאה</button>
+  </div>
+  <div class="sess-prog-bar"><div class="sess-prog-fill" id="sess-prog" style="width:0%"></div></div>
+  <div class="sess-body" id="sess-body"></div>
+</div>
+
+<!-- TIMER -->
+<div id="timer-screen">
+  <div class="timer-title">מנוחה</div>
+  <div class="timer-wrap">
+    <svg width="190" height="190" viewBox="0 0 190 190">
+      <circle class="t-bg" cx="95" cy="95" r="84"/>
+      <circle class="t-fill" id="t-ring" cx="95" cy="95" r="84" stroke-dasharray="528" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-num" id="t-display">60</div>
+  </div>
+  <div style="font-size:12px;color:var(--txt2);text-align:center;padding:0 20px" id="t-hint"></div>
+  <div class="timer-btns">
+    <button class="btn btn-secondary btn-sm" onclick="addTime(30)">+30 שנ'</button>
+    <button class="btn btn-primary btn-sm" onclick="skipTimer()" style="min-width:110px">דלג ←</button>
+  </div>
+</div>
+
+<!-- COMPLETE -->
+<div id="complete-screen">
+  <div class="comp-icon">🏆</div>
+  <div class="comp-title">כל הכבוד!</div>
+  <div id="comp-quote" style="font-size:14px;color:var(--txt2);font-style:italic"></div>
+  <div class="comp-grid" id="comp-stats"></div>
+  <button class="btn btn-primary" style="max-width:260px;margin-top:8px" onclick="finishSession()">סיום ←</button>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings-overlay" onclick="closeSettingsOutside(event)">
+  <div class="settings-sheet">
+    <div class="s-title">⚙ הגדרות</div>
+    <div class="s-row"><div class="s-lbl">שם</div><input class="s-input" id="s-name" type="text" placeholder="אריאל" oninput="saveSetting('name',this.value)"></div>
+    <div class="s-row"><div class="s-lbl">משקל גוף (ק"ג)</div><input class="s-input" id="s-weight" type="number" placeholder="70" oninput="updateProtein(this.value)"><div class="protein-hint" id="protein-hint"></div></div>
+    <div class="s-row"><div class="s-lbl">אימון הבא</div><div style="display:flex;gap:10px"><button class="btn btn-secondary btn-sm" onclick="setNextWorkout('A')" id="btn-next-a" style="flex:1">הגדר A הבא</button><button class="btn btn-secondary btn-sm" onclick="setNextWorkout('B')" id="btn-next-b" style="flex:1">הגדר B הבא</button></div></div>
+    <div class="divider"></div>
+    <button class="btn btn-danger btn-sm" onclick="resetAllData()" style="width:100%">🗑 איפוס כל הנתונים</button>
+    <div style="height:10px"></div>
+    <button class="btn btn-secondary btn-sm" onclick="closeSettings()" style="width:100%">סגור</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  PROGRAM DATA
+// ══════════════════════════════════════════════════════════════
+const PD = {
+  A: {
+    name: "אימון A",
+    warmupType: "פלג גוף עליון",
+    exercises: [
+      { id:"pull_sup",   name:"מתח סופינציה",                               sets:5, rMin:3,  rMax:3,  rest:240, note:"3 חזרות" },
+      { id:"dips",       name:"מקבילים",                                    sets:5, rMin:3,  rMax:4,  rest:180, note:"3-4 חזרות" },
+      { id:"pull_band",  name:"מתח סופינציה + גומייה + עצירה",              sets:2, rMin:1,  rMax:12, rest:120, note:"מקסימום עד 12" },
+      { id:"dips_neg",   name:"מקבילים שליליות + גומייה + עצירה",          sets:2, rMin:1,  rMax:12, rest:120, note:"מקסימום עד 12" },
+      // superset: Australian → immediately → Push-up → 90s rest → repeat
+      { id:"aus_pull",   name:"מתח אוסטרלי",                                sets:4, rMin:1,  rMax:20, rest:90,  note:"מקסימום עד 20", ssNext:"pushup_a" },
+      { id:"pushup_a",   name:"שכיבות סמיכה",                               sets:4, rMin:1,  rMax:20, rest:90,  note:"מקסימום עד 20", ssPair:true },
+    ]
+  },
+  B: {
+    name: "אימון B",
+    warmupType: "פלג גוף עליון",
+    exercises: [
+      { id:"pull_sup_up",  name:"מתח סופינציה – חצי טווח עליון",            sets:3, rMin:1,  rMax:10, rest:180, note:"מקסימום עד 10" },
+      { id:"pull_pron_lo", name:"מתח פרונציה – חצי טווח תחתון",             sets:3, rMin:1,  rMax:10, rest:180, note:"מקסימום עד 10" },
+      { id:"dips_legs",    name:"מקבילים עם עזרת רגליים",                   sets:5, rMin:8,  rMax:12, rest:120, note:"8-12 חזרות" },
+      { id:"pushup_stop",  name:"שכיבות סמיכה – 3 עצירות",                  sets:3, rMin:10, rMax:16, rest:90,  note:"10-16 חזרות", ssNext:"elbow_flex" },
+      { id:"elbow_flex",   name:"כפיפות מרפקים",                             sets:3, rMin:10, rMax:16, rest:90,  note:"10-16 חזרות", ssPair:true },
+    ]
+  },
+  LEGS: {
+    name: "אימון רגליים",
+    warmupType: "פלג גוף תחתון",
+    exercises: [
+      { id:"prep",      name:"רוטינת הכנה 1",                               sets:1, rMin:1,  rMax:1,  rest:60,  note:"לפי הסרטון" },
+      { id:"squat",     name:"סקוואט",                                       sets:3, rMin:1,  rMax:15, rest:90,  note:"מקסימום עד 15" },
+      { id:"lunge",     name:"לאנג' קדמי – כל פעם רגל אחרת",               sets:3, rMin:16, rMax:16, rest:90,  note:"16 (8 כל רגל)" },
+      { id:"goodmorn",  name:"גודמורנינג – ידיים מעל הראש",                  sets:2, rMin:10, rMax:15, rest:60,  note:"10-15 חזרות" },
+      { id:"calf",      name:"הרמות תאומים על מדרגה",                        sets:3, rMin:1,  rMax:20, rest:60,  note:"מקסימום עד 20" },
+      { id:"plank_hip", name:"פלאנק הרחקת ירך",                             sets:3, rMin:6,  rMax:8,  rest:60,  note:"6-8 כל צד" },
+    ]
+  },
+  CHALLENGE: [
+    { exId:"pull_sup",  name:"מתח סופינציה",    target:4  },
+    { exId:"pushup_a",  name:"שכיבות סמיכה",    target:12 },
+    { exId:"dips",      name:"מקבילים",          target:6  },
+    { exId:"aus_pull",  name:"מתח אוסטרלי",      target:12 },
+  ]
+};
+
+const MOTIV = [
+  "השריר נבנה במנוחה. תנוח טוב. 💪",
+  "כל אימון מקרב אותך לאתגר המעבר! ⚔",
+  "עוד צעד לרמה הבאה. המשך כך! 🔥",
+  "האלופים נבנים באימונים כאלה. 🏆",
+  "הגוף שלך התחזק היום. 💯",
+  "קשה באימונים – קל בקרב. ✊"
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
+};
+
+let state = {
+  nextWorkout: LS.get('nextWorkout') || 'A',   // which comes next in the A/B alternation
+  sessions:    LS.get('sessions')    || [],
+  profile:     LS.get('profile')     || { name:'אריאל', weight:70 },
+};
+
+// Session execution state
+let S = null;       // active session object
+let tInterval = null, tTotal = 0, tLeft = 0, tCb = null;
+let sessStart = null;
+
+// ══════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  const renders = { today:renderToday, workout:renderWorkout, progress:renderProgress, map:renderMap, history:renderHistory };
+  renders[name]?.();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TODAY
+// ══════════════════════════════════════════════════════════════
+function renderToday() {
+  const next = state.nextWorkout;
+  const streak = calcStreak();
+  const total = state.sessions.length;
+
+  // Count completed sessions this week (Mon–Sun)
+  const now = new Date();
+  const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0,0,0,0);
+  const thisWeekCount = state.sessions.filter(s => new Date(s.date) >= startOfWeek && (s.workoutType==='A'||s.workoutType==='B')).length;
+  const weekNum = calcWeekNum();
+
+  let html = `<div class="today-hero">
+    <div class="today-big-letter">${next}</div>
+    <div class="today-sub">אימון ${next} הוא הבא בתור</div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-num">${streak}</div><div class="stat-lbl">רצף ימים 🔥</div></div>
+    <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">אימונים 💪</div></div>
+    <div class="stat-box"><div class="stat-num">${thisWeekCount}/3</div><div class="stat-lbl">השבוע 📅</div></div>
+  </div>
+  <button class="btn btn-primary" style="margin-bottom:10px;font-size:17px;min-height:58px" onclick="beginSession('${next}')">▶ התחל אימון ${next}</button>
+  <button class="btn btn-secondary" style="min-height:46px;margin-bottom:14px" onclick="beginSession('LEGS')">🦵 אימון רגליים (בונוס – ימי מנוחה)</button>
+  <div class="card">
+    <div class="card-title">4 כללי הברזל</div>
+    <div style="font-size:13px;color:var(--txt2);line-height:2.1">
+      1. לדחוק עצמך לקצה 💥<br>
+      2. מנוחה אמיתית בימי מנוחה 😴<br>
+      3. שינה 6-8 שעות רציפות 🌙<br>
+      4. חלבון: 1.6–2.2 גרם לכל ק"ג 🥩
+    </div>
+  </div>`;
+
+  document.getElementById('today-content').innerHTML = html;
+}
+
+function calcStreak() {
+  if (!state.sessions.length) return 0;
+  const dates = [...new Set(state.sessions.map(s=>s.date))].sort().reverse();
+  let streak = 0, check = new Date(); check.setHours(0,0,0,0);
+  for (let d of dates) {
+    const sd = new Date(d); sd.setHours(0,0,0,0);
+    if ((check-sd)/86400000 <= 1) { streak++; check=sd; } else break;
+  }
+  return streak;
+}
+
+function calcWeekNum() {
+  const abCount = state.sessions.filter(s=>s.workoutType==='A'||s.workoutType==='B').length;
+  return Math.floor(abCount/3) + 1;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  WORKOUT TAB (Choose A / B / Legs)
+// ══════════════════════════════════════════════════════════════
+function renderWorkout() {
+  const next = state.nextWorkout;
+  const other = next === 'A' ? 'B' : 'A';
+  let html = `<div style="margin-bottom:12px">
+    <div style="font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-bottom:10px">בחר אימון</div>
+    <div class="workout-choice">
+      <div class="workout-choice-card ${next==='A'?'highlighted':''}" onclick="beginSession('A')">
+        <div class="wc-letter" style="color:var(--acc)">A</div>
+        <div class="wc-label">מתח + מקבילים<br>+ שכיבות</div>
+        ${next==='A'?'<div class="wc-tag">⭐ הבא בתור</div>':''}
+      </div>
+      <div class="workout-choice-card ${next==='B'?'highlighted':''}" onclick="beginSession('B')">
+        <div class="wc-letter" style="color:#c07dff">B</div>
+        <div class="wc-label">מתח חצי טווח<br>+ כפיפות</div>
+        ${next==='B'?'<div class="wc-tag">⭐ הבא בתור</div>':''}
+      </div>
+    </div>
+    <button class="btn btn-secondary" style="min-height:46px" onclick="beginSession('LEGS')">🦵 אימון רגליים (בונוס)</button>
+  </div>`;
+
+  // Exercise preview
+  ['A','B'].forEach(t => {
+    const w = PD[t];
+    html += `<div class="card"><div class="card-title">תרגילי אימון ${t}</div>`;
+    w.exercises.forEach(ex => {
+      const rep = ex.rMin===ex.rMax ? `${ex.rMax}` : `${ex.rMin}–${ex.rMax}`;
+      html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bg3);font-size:12px">
+        <span style="color:var(--txt);flex:1">${ex.ssNext?'⚡ ':ex.ssPair?'↳ ':''} ${ex.name}</span>
+        <span style="color:var(--txt2);white-space:nowrap;margin-right:8px">${ex.sets}×${rep}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  // Leg preview
+  const lw = PD.LEGS;
+  html += `<div class="card"><div class="card-title">תרגילי אימון רגליים</div>`;
+  lw.exercises.forEach(ex => {
+    html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bg3);font-size:12px">
+      <span style="color:var(--txt);flex:1">${ex.name}</span>
+      <span style="color:var(--txt2);white-space:nowrap;margin-right:8px">${ex.sets}×${ex.note||ex.rMax}</span>
+    </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('workout-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SESSION LOGIC
+// ══════════════════════════════════════════════════════════════
+function beginSession(type) {
+  const workout = PD[type];
+  if (!workout) return;
+  S = { type, workout, exIdx:0, setIdx:0, logs:[] };
+  sessStart = Date.now();
+  const warmupMap = { A:'חימום פלג גוף עליון', B:'חימום פלג גוף עליון', LEGS:'חימום פלג גוף תחתון' };
+  document.getElementById('warmup-type-label').innerHTML = `${warmupMap[type]}<br><span style="font-size:12px">לפחות 5-7 דקות לפני שמתחילים</span>`;
+  document.getElementById('warmup-screen').classList.add('active');
+}
+
+function cancelSession() {
+  document.getElementById('warmup-screen').classList.remove('active');
+  S = null;
+}
+
+function confirmCancelSession() {
+  if (confirm('לצאת מהאימון?')) {
+    document.getElementById('session-screen').classList.remove('active');
+    document.getElementById('timer-screen').classList.remove('active');
+    stopTimer(); S = null;
+  }
+}
+
+function startActualWorkout() {
+  document.getElementById('warmup-screen').classList.remove('active');
+  document.getElementById('session-screen').classList.add('active');
+  renderExercise();
+}
+
+function renderExercise() {
+  if (!S) return;
+  const exs = S.workout.exercises;
+  if (S.exIdx >= exs.length) { completeSession(); return; }
+  const ex = exs[S.exIdx];
+  const pct = (S.exIdx / exs.length) * 100;
+  document.getElementById('sess-prog').style.width = pct+'%';
+  document.getElementById('sess-title').textContent = S.workout.name;
+  document.getElementById('sess-sub').textContent = `תרגיל ${S.exIdx+1} מתוך ${exs.length}`;
+
+  const restLabel = ex.rest > 0 ? `${Math.round(ex.rest/60*10)/10} דקות מנוחה` : 'בלי מנוחה';
+  const ssLabel = ex.ssNext ? `<div class="ss-badge">⚡ סופרסט → ${exs.find(e=>e.id===ex.ssNext)?.name}</div>` : (ex.ssPair ? `<div class="ss-badge">↳ המשך סופרסט</div>` : '');
+
+  const prevSets = S.logs.filter(l=>l.exId===ex.id);
+  const prevHtml = prevSets.length ? `<div class="card" style="padding:10px;margin-top:10px">
+    <div class="card-title">סטים קודמים</div>
+    ${prevSets.map(l=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:var(--txt2)"><span>סט ${l.set}</span><span style="${l.actual>=l.target?'color:var(--acc)':'color:var(--yel)'}">${l.actual} / ${l.target}</span></div>`).join('')}
+  </div>` : '';
+
+  document.getElementById('sess-body').innerHTML = `
+    ${ssLabel}
+    <div class="ex-card">
+      <div class="set-ctr">סט ${S.setIdx+1} מתוך ${ex.sets}</div>
+      <div class="ex-name">${ex.name}</div>
+      <div class="ex-meta">${ex.note} · ${restLabel}</div>
+      <div class="reps-hint">חזרות שבוצעו:</div>
+      <div class="reps-ctrl">
+        <button class="rep-btn" onclick="chgReps(-1)">−</button>
+        <div class="reps-val" id="reps-val">${ex.rMax}</div>
+        <button class="rep-btn" onclick="chgReps(1)">+</button>
+      </div>
+      <button class="btn btn-primary" onclick="logSet()">✓ אשר סט</button>
+    </div>
+    ${prevHtml}
+  `;
+  document.getElementById('sess-body').scrollTop = 0;
+}
+
+function chgReps(d) {
+  const el = document.getElementById('reps-val');
+  if (el) el.textContent = Math.max(0, parseInt(el.textContent)+d);
+}
+
+function logSet() {
+  if (!S) return;
+  const ex = S.workout.exercises[S.exIdx];
+  const actual = parseInt(document.getElementById('reps-val')?.textContent || ex.rMax);
+  S.logs.push({ exId:ex.id, exName:ex.name, set:S.setIdx+1, target:ex.rMax, actual });
+
+  const nextSet = S.setIdx + 1;
+  if (nextSet < ex.sets) {
+    S.setIdx = nextSet;
+    // If this exercise has a superset partner, NO rest between them, rest only after
+    if (ex.ssNext) {
+      // Go to partner immediately
+      S.exIdx = S.workout.exercises.findIndex(e=>e.id===ex.ssNext);
+      S.setIdx = nextSet - 1; // partner is on same set number
+      // Actually for superset: ex sets:4 means do 4 rounds of the pair
+      // After both exercises of pair, then rest
+      renderExercise();
+    } else if (ex.ssPair) {
+      // Just finished the 2nd exercise in pair, now rest
+      if (ex.rest > 0) {
+        const nextEx = S.workout.exercises[S.exIdx]; // same ex, next set
+        startTimer(ex.rest, ()=>renderExercise(), `סט ${nextSet+1} מתוך ${ex.sets} – ${ex.name}`);
+      } else renderExercise();
+    } else {
+      if (ex.rest > 0) startTimer(ex.rest, ()=>renderExercise(), `סט ${nextSet+1} מתוך ${ex.sets} – ${ex.name}`);
+      else renderExercise();
+    }
+  } else {
+    // Finished all sets for this exercise
+    S.setIdx = 0;
+    if (ex.ssNext) {
+      // Move to superset partner, set 0, no rest
+      S.exIdx = S.workout.exercises.findIndex(e=>e.id===ex.ssNext);
+      renderExercise();
+    } else {
+      // Move to next exercise
+      S.exIdx++;
+      const nextEx = S.workout.exercises[S.exIdx];
+      if (nextEx && ex.rest > 0) startTimer(ex.rest, ()=>renderExercise(), nextEx.name);
+      else renderExercise();
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════════════
+function startTimer(secs, cb, hint) {
+  stopTimer();
+  tTotal = secs; tLeft = secs; tCb = cb;
+  document.getElementById('t-hint').textContent = hint ? `הבא: ${hint}` : '';
+  document.getElementById('t-display').textContent = secs;
+  updateRing(secs, secs);
+  document.getElementById('timer-screen').classList.add('active');
+  tInterval = setInterval(()=>{
+    tLeft--;
+    document.getElementById('t-display').textContent = tLeft;
+    updateRing(tLeft, tTotal);
+    if (tLeft <= 0) { clearInterval(tInterval); buzz(); document.getElementById('timer-screen').classList.remove('active'); tCb?.(); }
+  }, 1000);
+}
+function updateRing(left, total) {
+  const circ = 528, off = circ - (left/total)*circ;
+  document.getElementById('t-ring').style.strokeDashoffset = off;
+}
+function stopTimer() { if (tInterval) { clearInterval(tInterval); tInterval=null; } }
+function skipTimer() { stopTimer(); document.getElementById('timer-screen').classList.remove('active'); tCb?.(); }
+function addTime(s) { tLeft+=s; tTotal+=s; }
+function buzz() {
+  try { navigator.vibrate?.([200,100,200]); } catch {}
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value=520; g.gain.setValueAtTime(.4,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+    o.start(); o.stop(ctx.currentTime+.4);
+  } catch {}
+}
+
+// ══════════════════════════════════════════════════════════════
+//  COMPLETE SESSION
+// ══════════════════════════════════════════════════════════════
+function completeSession() {
+  document.getElementById('session-screen').classList.remove('active');
+  stopTimer();
+  const dur = Math.round((Date.now()-sessStart)/60000);
+  const session = {
+    id: Date.now(),
+    date: new Date().toISOString().split('T')[0],
+    workoutType: S.type,
+    duration: dur,
+    exercises: buildExSummary(S.logs),
+  };
+  state.sessions.push(session);
+  LS.set('sessions', state.sessions);
+
+  // Advance next workout pointer (A↔B alternation)
+  if (S.type==='A'||S.type==='B') {
+    state.nextWorkout = S.type==='A' ? 'B' : 'A';
+    LS.set('nextWorkout', state.nextWorkout);
+  }
+
+  const sets = S.logs.length, reps = S.logs.reduce((a,l)=>a+l.actual,0);
+  document.getElementById('comp-stats').innerHTML = `
+    <div class="comp-stat"><div class="comp-num">${sets}</div><div class="comp-lbl">סטים</div></div>
+    <div class="comp-stat"><div class="comp-num">${reps}</div><div class="comp-lbl">חזרות</div></div>
+    <div class="comp-stat"><div class="comp-num">${dur}</div><div class="comp-lbl">דקות</div></div>`;
+  document.getElementById('comp-quote').textContent = MOTIV[Math.floor(Math.random()*MOTIV.length)];
+  document.getElementById('complete-screen').classList.add('active');
+  S = null;
+}
+
+function buildExSummary(logs) {
+  const map = {};
+  logs.forEach(l=>{ if(!map[l.exId]) map[l.exId]={name:l.exName,id:l.exId,sets:[]}; map[l.exId].sets.push({target:l.target,actual:l.actual}); });
+  return Object.values(map);
+}
+
+function finishSession() {
+  document.getElementById('complete-screen').classList.remove('active');
+  switchTab('today');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════════════════════
+function renderProgress() {
+  // Compute personal bests per exercise id
+  const bests = {};
+  state.sessions.forEach(s=>{
+    s.exercises.forEach(ex=>{
+      ex.sets.forEach(set=>{
+        if (!bests[ex.id] || set.actual > bests[ex.id]) bests[ex.id] = set.actual;
+      });
+    });
+  });
+
+  const ready = PD.CHALLENGE.filter(c=>(bests[c.exId]||0)>=c.target).length;
+
+  let html = `<div class="card" style="text-align:center;margin-bottom:12px">
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:4px">אתגר מעבר ⚔ רמה 0.6</div>
+    <div style="font-family:'Oswald',sans-serif;font-size:52px;font-weight:700;color:var(--acc)">${ready}/4</div>
+    <div style="font-size:12px;color:var(--txt2)">תרגילים מוכנים לאתגר</div>
+    ${ready===4?'<div style="color:var(--acc);font-size:13px;margin-top:8px;font-weight:700">🎉 מוכן לשלוח סרטון!</div>':''}
+  </div>`;
+
+  html += `<div class="card">`;
+  PD.CHALLENGE.forEach(c=>{
+    const best = bests[c.exId]||0, pct = Math.min(100,Math.round((best/c.target)*100)), done = best>=c.target;
+    html += `<div class="chal-wrap">
+      <div class="chal-hdr">
+        <span class="chal-name">${done?'✅ ':''} ${c.name}</span>
+        <span class="chal-num">${best} / ${c.target}</span>
+      </div>
+      <div class="chal-track"><div class="chal-fill ${done?'done':''}" style="width:${pct}%"></div></div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="card">
+    <div class="card-title">תנאי האתגר</div>
+    <div style="font-size:13px;color:var(--txt2);line-height:2.1">
+      1. טכניקה נקייה וטווח תנועה מלא ✅<br>
+      2. כל תרגיל – סרטון נפרד 📹<br>
+      3. יומיים מנוחה לפני הניסיון 😴<br>
+      4. לשלוח לבוניאן לאישור 📤
+    </div>
+  </div>`;
+
+  document.getElementById('progress-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRAM MAP
+// ══════════════════════════════════════════════════════════════
+function renderMap() {
+  const levels = [
+    { n:'0',   phase:'base', done:true  },
+    { n:'0.5', phase:'base', done:true  },
+    { n:'0.6', phase:'base', curr:true  },
+    { n:'1',   phase:'base', locked:true },
+    { n:'1.5', phase:'base', locked:true },
+    { n:'2',   phase:'base', locked:true },
+    { n:'2.5', phase:'base', locked:true },
+    { n:'3',   phase:'base', locked:true },
+    { n:'3.5', phase:'base', locked:true },
+    { n:'4',   phase:'pro',  locked:true },
+    { n:'4.5', phase:'pro',  locked:true },
+    { n:'5',   phase:'pro',  locked:true },
+    { n:'5.5', phase:'pro',  locked:true },
+    { n:'6',   phase:'pro',  locked:true },
+    { n:'6.5', phase:'pro',  locked:true },
+    { n:'7',   phase:'pro',  locked:true },
+  ];
+
+  const baseLevels = levels.filter(l=>l.phase==='base');
+  const proLevels = levels.filter(l=>l.phase==='pro');
+
+  function levelCard(l) {
+    const cls = l.curr ? 'current' : l.done ? 'done' : 'locked';
+    const badge = l.curr ? '📍' : l.done ? '✅' : '🔒';
+    return `<div class="map-level ${cls}">
+      <div class="map-level-badge">${badge}</div>
+      <div class="map-level-num">${l.n}</div>
+      <div class="map-level-label">${l.curr?'אתה כאן':l.done?'הושלם':''}</div>
+    </div>`;
+  }
+
+  let html = `<div class="map-wrap">
+    <div style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;text-align:center;color:var(--acc);letter-spacing:2px;margin-bottom:16px">מפת התוכנית</div>
+    <div style="font-size:12px;color:var(--txt2);text-align:center;margin-bottom:16px;line-height:1.6">2 שלבים · 4 רמות לכל שלב<br>אתה עובר רמה על ידי אתגר מעבר</div>
+
+    <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:12px">
+      <div class="map-phase-label map-phase-pro" style="font-size:14px">שלב הפרו 🔴</div>
+      <div class="map-levels">${proLevels.slice().reverse().map(levelCard).join('')}</div>
+    </div>
+
+    <div style="text-align:center;padding:6px 0;font-size:20px;color:var(--txt3)">↑</div>
+
+    <div style="background:var(--bg3);border-radius:10px;padding:12px">
+      <div class="map-phase-label map-phase-base" style="font-size:14px">שלב הבסיס 🟢</div>
+      <div class="map-levels">${baseLevels.slice().reverse().map(levelCard).join('')}</div>
+    </div>
+  </div>`;
+
+  html += `<div class="card" style="margin-top:12px">
+    <div class="card-title">המיקום שלך עכשיו</div>
+    <div style="font-size:32px;font-family:'Oswald',sans-serif;color:var(--acc);text-align:center;margin:10px 0">רמה 0.6</div>
+    <div style="font-size:13px;color:var(--txt2);text-align:center">שלב הבסיס · סה"כ ${state.sessions.filter(s=>s.workoutType==='A'||s.workoutType==='B').length} אימונים הושלמו</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">לעבור לרמה 1 צריך</div>
+    <div style="font-size:13px;color:var(--txt2);line-height:2.1">
+      ⚔ 4 מתח סופינציה<br>
+      ⚔ 12 שכיבות סמיכה<br>
+      ⚔ 6 מקבילים<br>
+      ⚔ 12 מתח אוסטרלי<br>
+      <br>
+      <span style="font-size:11px">בטכניקה נקייה · כל תרגיל בסרטון נפרד</span>
+    </div>
+  </div>`;
+
+  document.getElementById('map-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════════════════════════════════
+function renderHistory() {
+  const el = document.getElementById('history-content');
+  if (!state.sessions.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🏋️</div><div class="empty-text">עדיין אין אימונים מוקלטים.<br>בוא נתחיל!</div></div>`;
+    return;
+  }
+  const sorted = [...state.sessions].sort((a,b)=>b.id-a.id);
+  let html = '';
+  sorted.forEach((s,i)=>{
+    const sets = s.exercises.reduce((a,e)=>a+e.sets.length,0);
+    const tc = s.workoutType==='A'?'badge-a':s.workoutType==='B'?'badge-b':'badge-legs';
+    const lbl = s.workoutType==='LEGS'?'רגליים':s.workoutType;
+    const dateStr = new Date(s.date).toLocaleDateString('he-IL',{day:'numeric',month:'long'});
+    html += `<div class="sess-row" onclick="toggleDetail(${i})">
+      <div class="sess-row-hdr">
+        <span class="badge ${tc}">${lbl}</span>
+        <span class="sess-row-date">${dateStr}</span>
+        <span class="sess-row-info">${sets} סטים · ${s.duration||'?'} דק'</span>
+      </div>
+      <div class="sess-detail" id="det-${i}">
+        ${s.exercises.map(ex=>`
+          <div class="ex-g-name">${ex.name}</div>
+          ${ex.sets.map((st,si)=>{
+            const d=st.actual-st.target;
+            const c=d>=0?'rep-ok':d>=-2?'rep-close':'rep-low';
+            return `<div class="set-log"><span style="color:var(--txt3)">סט ${si+1}</span><span class="${c}">${st.actual} / ${st.target}</span></div>`;
+          }).join('')}
+        `).join('')}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+function toggleDetail(i) { document.getElementById('det-'+i)?.classList.toggle('open'); }
+
+// ══════════════════════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════════════════════
+function openSettings() {
+  document.getElementById('s-name').value = state.profile.name||'';
+  document.getElementById('s-weight').value = state.profile.weight||'';
+  updateProtein(state.profile.weight);
+  document.getElementById('settings-overlay').classList.add('active');
+}
+function closeSettings() { document.getElementById('settings-overlay').classList.remove('active'); }
+function closeSettingsOutside(e) { if(e.target===document.getElementById('settings-overlay')) closeSettings(); }
+function saveSetting(k,v) { state.profile[k]=v; LS.set('profile',state.profile); }
+function updateProtein(w) {
+  const wt=parseFloat(w); state.profile.weight=wt; LS.set('profile',state.profile);
+  if(wt>0) document.getElementById('protein-hint').textContent=`יעד: ${Math.round(wt*1.6)}–${Math.round(wt*2.2)} גרם חלבון ליום`;
+}
+function setNextWorkout(t) { state.nextWorkout=t; LS.set('nextWorkout',t); closeSettings(); renderToday(); }
+function resetAllData() {
+  if(confirm('למחוק הכל?')) {
+    localStorage.clear();
+    state={nextWorkout:'A',sessions:[],profile:{name:'אריאל',weight:70}};
+    closeSettings(); switchTab('today');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+renderToday();
+</script>
+</body>
+</html>
